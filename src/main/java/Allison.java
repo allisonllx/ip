@@ -11,7 +11,7 @@ public class Allison {
         System.out.println("-".repeat(60));
 
         String text = "";
-        while (!text.equalsIgnoreCase("bye")) { // loop until user types "bye"
+        while (!text.trim().equalsIgnoreCase("bye")) { // loop until user types "bye"
             System.out.print("> "); // prompt for input
             text = sc.nextLine();
 
@@ -55,10 +55,73 @@ public class Allison {
                 } else {
                     System.out.println("Usage: unmark <task number>");
                 }
-            } else {
-                list[counter++] = new Task(text);
+            } else if (text.toLowerCase().startsWith("todo")) {
+                String[] parts = text.split(" ", 2);
+                Todo todo = null;
+                if (parts.length == 2) {
+                    String taskDesc = parts[1].trim();
+                    todo = new Todo(taskDesc);
+                } else {
+                    System.out.println("Usage: todo <description>");
+                    return;
+                }
+                list[counter++] = todo;
+
                 System.out.println("-".repeat(60));
-                System.out.println("added: " + text);
+                System.out.println("Got it. I've added this task:");
+                System.out.println(todo);
+                System.out.println("Now you have " + counter + " tasks in the list.");
+                System.out.println("-".repeat(60));
+            } else if (text.toLowerCase().startsWith("deadline")) {
+                if (!text.contains("/by")) {
+                    System.out.println("Usage: deadline <task> /by <time>");
+                    return;
+                }
+
+                String[] parts = text.split("/by", 2);
+                Deadline deadline = null;
+                if (parts.length == 2) {
+                    String description = parts[0]
+                            .replaceFirst("deadline", "")
+                            .trim();
+                    String by = parts[1].trim();
+                    deadline = new Deadline(description, by);
+                } else {
+                    System.out.println("Usage: deadline <task> /by <time>");
+                    return;
+                }
+                list[counter++] = deadline;
+
+                System.out.println("-".repeat(60));
+                System.out.println("Got it. I've added this task:");
+                System.out.println(deadline);
+                System.out.println("Now you have " + counter + " tasks in the list.");
+                System.out.println("-".repeat(60));
+            } else if (text.toLowerCase().startsWith("event")) {
+                if (!text.contains("/from") || !text.contains("/to")) {
+                    System.out.println("Usage: event <desc> /from <start> /to <end>");
+                    return;
+                }
+
+                String withoutEvent = text.substring(5).trim(); // remove "event "
+                String[] firstSplit = withoutEvent.split("/from", 2);
+
+                String description = firstSplit[0].trim();
+                String[] timeSplit = firstSplit[1].split("/to", 2);
+
+                String from = timeSplit[0].trim();
+                String to = timeSplit[1].trim();
+                Event event = new Event(description, from, to);
+                list[counter++] = event;
+
+                System.out.println("-".repeat(60));
+                System.out.println("Got it. I've added this task:");
+                System.out.println(event);
+                System.out.println("Now you have " + counter + " tasks in the list.");
+                System.out.println("-".repeat(60));
+            } else {
+                System.out.println("-".repeat(60));
+                System.out.println("Invalid command");
                 System.out.println("-".repeat(60));
             }
         }
