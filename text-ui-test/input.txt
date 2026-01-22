@@ -1,0 +1,11 @@
+todo buy bread
+deadline complete homework /by Sat
+event family outing /from 12pm /to 6pm
+list
+mark 2
+list
+mark 3
+list
+unmark 2
+list
+bye
