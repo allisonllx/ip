@@ -1,11 +1,12 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Allison {
     public static void main(String[] args) throws AllisonException {
         Scanner sc = new Scanner(System.in);
-        Task[] list = new Task[100];
-        int counter = 0;
+        ArrayList<Task> list = new ArrayList<>();
+//        int counter = 0;
         boolean running = true;
 
         System.out.println("_".repeat(60));
@@ -23,9 +24,9 @@ public class Allison {
                 running = false;
             } else if (text.trim().equalsIgnoreCase("list")) {
                 System.out.println("Here are the tasks in your list:");
-                for (int i = 0; i < list.length; i++) {
-                    if (list[i] != null) {
-                        System.out.println(i+1 + ". " + list[i]);
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i) != null) {
+                        System.out.println(i+1 + ". " + list.get(i));
                     }
                 }
             } else if (text.toLowerCase().startsWith("mark")) {
@@ -34,8 +35,8 @@ public class Allison {
                     try {
                         int taskNumber = Integer.parseInt(parts[1]); // convert string to int
                         System.out.println("Nice! I've marked this task as done:");
-                        list[taskNumber - 1].markAsDone();
-                        System.out.println(list[taskNumber - 1]);
+                        list.get(taskNumber - 1).markAsDone();
+                        System.out.println(list.get(taskNumber - 1));
                     } catch (NumberFormatException e) {
                         throw new AllisonException("Invalid number after 'mark'", "mark <task number>");
                     }
@@ -48,13 +49,28 @@ public class Allison {
                     try {
                         int taskNumber = Integer.parseInt(parts[1]); // convert string to int
                         System.out.println("OK, I've marked this task as not done yet:");
-                        list[taskNumber - 1].markAsUndone();
-                        System.out.println(list[taskNumber - 1]);
+                        list.get(taskNumber - 1).markAsUndone();
+                        System.out.println(list.get(taskNumber - 1));
                     } catch (NumberFormatException e) {
-                        throw new AllisonException("Invalid number after 'mark'", "unmark <task number>");
+                        throw new AllisonException("Invalid number after 'unmark'", "unmark <task number>");
                     }
                 } else {
                     throw new AllisonException("Missing task number", "unmark <task number>");
+                }
+            } else if (text.toLowerCase().startsWith("delete")) {
+                String[] parts = text.split(" ", 2);
+                if (parts.length == 2) {
+                    try {
+                        int taskNumber = Integer.parseInt(parts[1]); // convert string to int
+                        System.out.println("Noted. I've removed this task:");
+                        System.out.println(list.get(taskNumber - 1));
+                        list.remove(taskNumber - 1);
+                        System.out.println("Now you have " + list.size() + " tasks in the list.");
+                    } catch (NumberFormatException e) {
+                        throw new AllisonException("Invalid number after 'delete'", "delete <task number>");
+                    }
+                } else {
+                    throw new AllisonException("Missing task number", "delete <task number>");
                 }
             } else if (text.toLowerCase().startsWith("todo")) {
                 String[] parts = text.split(" ", 2);
@@ -65,11 +81,11 @@ public class Allison {
                 } else {
                     throw new AllisonException("Missing description in todo", "todo <description>");
                 }
-                list[counter++] = todo;
+                list.add(todo);
 
                 System.out.println("Got it. I've added this task:");
                 System.out.println(todo);
-                System.out.println("Now you have " + counter + " tasks in the list.");
+                System.out.println("Now you have " + list.size() + " tasks in the list.");
             } else if (text.toLowerCase().startsWith("deadline")) {
                 if (!text.contains("/by")) {
                     throw new AllisonException("Missing /by in deadline", "deadline <task> /by <time>");
@@ -89,11 +105,11 @@ public class Allison {
                 } else {
                     throw new AllisonException("Missing due date in deadline", "deadline <task> /by <time>");
                 }
-                list[counter++] = deadline;
+                list.add(deadline);
 
                 System.out.println("Got it. I've added this task:");
                 System.out.println(deadline);
-                System.out.println("Now you have " + counter + " tasks in the list.");
+                System.out.println("Now you have " + list.size() + " tasks in the list.");
             } else if (text.toLowerCase().startsWith("event")) {
                 if (!text.contains("/from") || !text.contains("/to")) {
                     throw new AllisonException("Missing /from or /to in event", "event <desc> /from <start> /to <end>");
@@ -111,11 +127,11 @@ public class Allison {
                 String from = timeSplit[0].trim();
                 String to = timeSplit[1].trim();
                 Event event = new Event(description, from, to);
-                list[counter++] = event;
+                list.add(event);
 
                 System.out.println("Got it. I've added this task:");
                 System.out.println(event);
-                System.out.println("Now you have " + counter + " tasks in the list.");
+                System.out.println("Now you have " + list.size() + " tasks in the list.");
             } else {
                 throw new AllisonException();
             }
