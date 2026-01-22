@@ -1,64 +1,60 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Allison {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws AllisonException {
         Scanner sc = new Scanner(System.in);
         Task[] list = new Task[100];
         int counter = 0;
+        boolean running = true;
 
         System.out.println("_".repeat(60));
         System.out.println("Hello! I'm Allison.\nWhat can I do for you?");
         System.out.println("_".repeat(60));
 
         String text = "";
-        while (!text.trim().equalsIgnoreCase("bye")) { // loop until user types "bye"
+        while (running) { // loop until user types "bye"
 //            System.out.print("> "); // prompt for input
             text = sc.nextLine();
+            System.out.println("_".repeat(60));
 
             if (text.trim().equalsIgnoreCase("bye")) {
-                System.out.println("_".repeat(60));
                 System.out.println("Bye. Hope to see you again soon!");
-                System.out.print("_".repeat(60));
+                running = false;
             } else if (text.trim().equalsIgnoreCase("list")) {
-                System.out.println("_".repeat(60));
                 System.out.println("Here are the tasks in your list:");
                 for (int i = 0; i < list.length; i++) {
                     if (list[i] != null) {
                         System.out.println(i+1 + ". " + list[i]);
                     }
                 }
-                System.out.println("_".repeat(60));
             } else if (text.toLowerCase().startsWith("mark")) {
-                String[] parts = text.split(" ");
+                String[] parts = text.split(" ", 2);
                 if (parts.length == 2) {
                     try {
                         int taskNumber = Integer.parseInt(parts[1]); // convert string to int
-                        System.out.println("_".repeat(60));
                         System.out.println("Nice! I've marked this task as done:");
                         list[taskNumber - 1].markAsDone();
                         System.out.println(list[taskNumber - 1]);
-                        System.out.println("_".repeat(60));
                     } catch (NumberFormatException e) {
-                        System.out.println("Invalid number after 'mark'.");
+                        throw new AllisonException("Invalid number after 'mark'", "mark <task number>");
                     }
                 } else {
-                    System.out.println("Usage: mark <task number>");
+                    throw new AllisonException("Missing task number", "mark <task number>");
                     }
             } else if (text.toLowerCase().startsWith("unmark")) {
-                String[] parts = text.split(" ");
+                String[] parts = text.split(" ", 2);
                 if (parts.length == 2) {
                     try {
                         int taskNumber = Integer.parseInt(parts[1]); // convert string to int
-                        System.out.println("_".repeat(60));
                         System.out.println("OK, I've marked this task as not done yet:");
                         list[taskNumber - 1].markAsUndone();
                         System.out.println(list[taskNumber - 1]);
-                        System.out.println("_".repeat(60));
                     } catch (NumberFormatException e) {
-                        System.out.println("Invalid number after 'unmark'.");
+                        throw new AllisonException("Invalid number after 'mark'", "unmark <task number>");
                     }
                 } else {
-                    System.out.println("Usage: unmark <task number>");
+                    throw new AllisonException("Missing task number", "unmark <task number>");
                 }
             } else if (text.toLowerCase().startsWith("todo")) {
                 String[] parts = text.split(" ", 2);
@@ -67,20 +63,16 @@ public class Allison {
                     String taskDesc = parts[1].trim();
                     todo = new Todo(taskDesc);
                 } else {
-                    System.out.println("Usage: todo <description>");
-                    return;
+                    throw new AllisonException("Missing description in todo", "todo <description>");
                 }
                 list[counter++] = todo;
 
-                System.out.println("_".repeat(60));
                 System.out.println("Got it. I've added this task:");
                 System.out.println(todo);
                 System.out.println("Now you have " + counter + " tasks in the list.");
-                System.out.println("_".repeat(60));
             } else if (text.toLowerCase().startsWith("deadline")) {
                 if (!text.contains("/by")) {
-                    System.out.println("Usage: deadline <task> /by <time>");
-                    return;
+                    throw new AllisonException("Missing /by in deadline", "deadline <task> /by <time>");
                 }
 
                 String[] parts = text.split("/by", 2);
@@ -89,29 +81,31 @@ public class Allison {
                     String description = parts[0]
                             .replaceFirst("deadline", "")
                             .trim();
+                    if (description.isEmpty()) {
+                        throw new AllisonException("Missing description in deadline", "deadline <task> /by <time>");
+                    }
                     String by = parts[1].trim();
                     deadline = new Deadline(description, by);
                 } else {
-                    System.out.println("Usage: deadline <task> /by <time>");
-                    return;
+                    throw new AllisonException("Missing due date in deadline", "deadline <task> /by <time>");
                 }
                 list[counter++] = deadline;
 
-                System.out.println("_".repeat(60));
                 System.out.println("Got it. I've added this task:");
                 System.out.println(deadline);
                 System.out.println("Now you have " + counter + " tasks in the list.");
-                System.out.println("_".repeat(60));
             } else if (text.toLowerCase().startsWith("event")) {
                 if (!text.contains("/from") || !text.contains("/to")) {
-                    System.out.println("Usage: event <desc> /from <start> /to <end>");
-                    return;
+                    throw new AllisonException("Missing /from or /to in event", "event <desc> /from <start> /to <end>");
                 }
 
                 String withoutEvent = text.substring(5).trim(); // remove "event "
                 String[] firstSplit = withoutEvent.split("/from", 2);
 
                 String description = firstSplit[0].trim();
+                if (description.isEmpty()) {
+                    throw new AllisonException("Missing description in deadline", "deadline <task> /by <time>");
+                }
                 String[] timeSplit = firstSplit[1].split("/to", 2);
 
                 String from = timeSplit[0].trim();
@@ -119,16 +113,14 @@ public class Allison {
                 Event event = new Event(description, from, to);
                 list[counter++] = event;
 
-                System.out.println("_".repeat(60));
                 System.out.println("Got it. I've added this task:");
                 System.out.println(event);
                 System.out.println("Now you have " + counter + " tasks in the list.");
-                System.out.println("_".repeat(60));
             } else {
-                System.out.println("_".repeat(60));
-                System.out.println("Invalid command");
-                System.out.println("_".repeat(60));
+                throw new AllisonException();
             }
+
+            System.out.println("_".repeat(60));
         }
 
         sc.close();
