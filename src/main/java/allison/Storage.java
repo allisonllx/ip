@@ -1,9 +1,16 @@
+package allison;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import allison.task.Task;
+import allison.task.Todo;
+import allison.task.Deadline;
+import allison.task.Event;
 
 public class Storage {
     private final String filePath;

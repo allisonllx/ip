@@ -1,3 +1,5 @@
+package allison;
+
 public class AllisonException extends Exception {
     public AllisonException() {
         super("Error: Invalid command");

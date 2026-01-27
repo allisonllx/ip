@@ -1,3 +1,5 @@
+package allison.task;
+
 public class Deadline extends Task {
     protected String dueDate;
 
@@ -9,5 +11,10 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + this.dueDate + ")";
+    }
+
+    @Override
+    public String toFileString() {
+        return "D|" + (isDone ? 1 : 0) + "|" + description + "|" + dueDate;
     }
 }

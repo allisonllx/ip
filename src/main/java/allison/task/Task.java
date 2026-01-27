@@ -1,3 +1,5 @@
+package allison.task;
+
 public class Task {
     protected String description;
     protected boolean isDone;
@@ -17,6 +19,14 @@ public class Task {
 
     public void markAsUndone() {
         this.isDone = false;
+    }
+
+    public void setIsDone(boolean isDone) {
+        this.isDone = isDone;
+    }
+
+    public String toFileString() {
+        return (isDone ? 1 : 0) + "|" + description;
     }
 
     @Override
