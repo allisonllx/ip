@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
+import java.time.LocalDateTime;
 
 import allison.task.Task;
 import allison.task.Todo;
@@ -80,13 +83,28 @@ public class Storage {
                 task = new Todo(description);
                 break;
             case "D":
-                String dueDate = parts[3];
-                task = new Deadline(description, dueDate);
+                try {
+                    LocalDateTime dueDate = LocalDateTime.parse(parts[3]);
+                    task = new Deadline(description, dueDate);
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid date/time format. Use yyyy-MM-ddTHH:mm");
+                    return null;
+                }
+//                String dueDate = parts[3];
+//                task = new Deadline(description, dueDate);
                 break;
             case "E":
-                String start = parts[3];
-                String end = parts[4];
-                task = new Event(description, start, end);
+                try {
+                    LocalDateTime start = LocalDateTime.parse(parts[3]);
+                    LocalDateTime end = LocalDateTime.parse(parts[4]);
+                    task = new Event(description, start, end);
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid date/time format. Use yyyy-MM-ddTHH:mm");
+                    return null;
+                }
+//                String start = parts[3];
+//                String end = parts[4];
+//                task = new Event(description, start, end);
                 break;
             default:
                 return null;
