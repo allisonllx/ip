@@ -1,8 +1,10 @@
 package allison;
 
 import java.io.FileNotFoundException;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.time.LocalDateTime;
 import allison.task.Task;
 import allison.task.Todo;
 import allison.task.Deadline;
@@ -105,8 +107,13 @@ public class Allison {
                     if (description.isEmpty()) {
                         throw new AllisonException("Missing description in deadline", "deadline <task> /by <time>");
                     }
-                    String by = parts[1].trim();
-                    deadline = new Deadline(description, by);
+//                    String by = parts[1].trim();
+                    try {
+                        LocalDateTime by = LocalDateTime.parse(parts[1].trim());
+                        deadline = new Deadline(description, by);
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date/time format. Use yyyy-MM-ddTHH:mm");
+                    }
                 } else {
                     throw new AllisonException("Missing due date in deadline", "deadline <task> /by <time>");
                 }
@@ -129,14 +136,22 @@ public class Allison {
                 }
                 String[] timeSplit = firstSplit[1].split("/to", 2);
 
-                String from = timeSplit[0].trim();
-                String to = timeSplit[1].trim();
-                Event event = new Event(description, from, to);
-                list.add(event);
+//                String from = timeSplit[0].trim();
+//                String to = timeSplit[1].trim();
 
-                System.out.println("Got it. I've added this task:");
-                System.out.println(event);
-                System.out.println("Now you have " + list.size() + " tasks in the list.");
+                try {
+                    LocalDateTime from = LocalDateTime.parse(timeSplit[0].trim());
+                    LocalDateTime to = LocalDateTime.parse(timeSplit[1].trim());
+
+                    Event event = new Event(description, from, to);
+                    list.add(event);
+
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println(event);
+                    System.out.println("Now you have " + list.size() + " tasks in the list.");
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid date/time format. Use yyyy-MM-ddTHH:mm");
+                }
             } else {
                 throw new AllisonException();
             }
