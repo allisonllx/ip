@@ -1,0 +1,3 @@
+T|0|read book
+D|0|return book|mon 5pm
+D|0|birthday party|wed 2:30pm|6:30pm

@@ -1,3 +1,5 @@
+package allison.task;
+
 public class Event extends Task {
     protected String start;
     protected String end;
@@ -11,5 +13,10 @@ public class Event extends Task {
     @Override
     public String toString() {
         return "[E]" + super.toString() + " (from: " + this.start + " to: " + this.end + ")";
+    }
+
+    @Override
+    public String toFileString() {
+        return "D|" + (isDone ? 1 : 0) + "|" + description + "|" + start + "|" + end;
     }
 }

@@ -1,12 +1,18 @@
-import java.lang.reflect.Array;
+package allison;
+
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import allison.task.Task;
+import allison.task.Todo;
+import allison.task.Deadline;
+import allison.task.Event;
 
 public class Allison {
-    public static void main(String[] args) throws AllisonException {
+    public static void main(String[] args) throws AllisonException, FileNotFoundException {
         Scanner sc = new Scanner(System.in);
-        ArrayList<Task> list = new ArrayList<>();
-//        int counter = 0;
+        Storage storage = new Storage("data/allison.txt");
+        ArrayList<Task> list = storage.load();
         boolean running = true;
 
         System.out.println("_".repeat(60));
@@ -15,7 +21,6 @@ public class Allison {
 
         String text = "";
         while (running) { // loop until user types "bye"
-//            System.out.print("> "); // prompt for input
             text = sc.nextLine();
             System.out.println("_".repeat(60));
 
@@ -139,6 +144,7 @@ public class Allison {
             System.out.println("_".repeat(60));
         }
 
+        storage.saveTasks(list);
         sc.close();
     }
 }
