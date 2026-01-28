@@ -7,13 +7,12 @@ import allison.task.Task;
 import allison.task.Todo;
 import allison.task.Deadline;
 import allison.task.Event;
-import allison.Storage;
 
 public class Allison {
     public static void main(String[] args) throws AllisonException, FileNotFoundException {
         Scanner sc = new Scanner(System.in);
-        Storage storage = new Storage("./data/allison.txt");
-        ArrayList<Task> list = new ArrayList<>();;
+        Storage storage = new Storage("data/allison.txt");
+        ArrayList<Task> list = storage.load();
         boolean running = true;
 
         System.out.println("_".repeat(60));
@@ -145,6 +144,7 @@ public class Allison {
             System.out.println("_".repeat(60));
         }
 
+        storage.saveTasks(list);
         sc.close();
     }
 }

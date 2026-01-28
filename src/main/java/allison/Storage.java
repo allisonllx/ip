@@ -19,34 +19,53 @@ public class Storage {
         this.filePath = filePath;
     }
 
-    public ArrayList<Task> load() throws FileNotFoundException {
+    public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<Task>();
         File f = new File(filePath);
-        Scanner s = new Scanner(f);
+        File parentDir = f.getParentFile();
+        if (!parentDir.exists()) {
+            parentDir.mkdirs();
+        }
 
         if (!f.exists()) {
             return tasks;
         }
 
-        while (s.hasNext()) {
-            String line = s.nextLine();
-            if (!line.isEmpty()) {
-                Task task = parseTask(line);
-                if (task != null) {
-                    tasks.add(task);
+        try {
+            Scanner s = new Scanner(f);
+            while (s.hasNext()) {
+                String line = s.nextLine();
+                if (!line.isEmpty()) {
+                    Task task = parseTask(line);
+                    if (task != null) {
+                        tasks.add(task);
+                    }
                 }
             }
+            return tasks;
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + filePath);
+            return tasks;
         }
-
-        return tasks;
     }
 
-    public void saveTasks(ArrayList<Task> tasks) throws IOException {
-        FileWriter fw = new FileWriter(filePath);
-        for (Task task: tasks) {
-            fw.write(task.toFileString() + "\n");
+    public void saveTasks(ArrayList<Task> tasks) {
+        File f = new File(this.filePath);
+        File parentDir = f.getParentFile();
+        if (!parentDir.exists()) {
+            parentDir.mkdirs();
         }
-        fw.close();
+
+        try {
+            FileWriter fw = new FileWriter(filePath);
+
+            for (Task task : tasks) {
+                fw.write(task.toFileString() + System.lineSeparator());
+            }
+            fw.close();
+        } catch (IOException e) {
+            System.out.println("Failed to save tasks");
+        }
     }
 
     public Task parseTask(String line) {
