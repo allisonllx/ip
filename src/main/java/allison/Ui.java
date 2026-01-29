@@ -1,6 +1,5 @@
 package allison;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 import allison.task.Task;
 
@@ -20,15 +19,13 @@ public class Ui {
         return SEPARATOR + "\n" + e.getMessage() + "\n" + SEPARATOR;
     }
 
-    public String listTasks(ArrayList<Task> tasks) {
-        StringBuilder tasksStr = new StringBuilder();
-        for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i) != null) {
-                tasksStr.append(i + 1).append(". ").append(tasks.get(i));
-            }
-        }
+    public String errorMessage(String text) {
+        return SEPARATOR + "\n" + text + "\n" + SEPARATOR;
+    }
+
+    public String listTasks(TaskList tasks) {
         return SEPARATOR + "\n" + "Here are the tasks in your list:"
-                + "\n" + tasksStr + "\n" + SEPARATOR;
+                + "\n" + tasks.listTasks() + "\n" + SEPARATOR;
     }
 
     public String addTask(Task task, int numTasks) {

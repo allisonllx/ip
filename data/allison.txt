@@ -1,3 +1,4 @@
 T|0|read book
-D|0|return book|mon 5pm
-D|0|birthday party|wed 2:30pm|6:30pm
+D|0|complete cs2106|Jan 30, 2026, 2:30:00 PM
+D|1|birthday party|Nov 17, 2026, 6:00:00 PM|Nov 17, 2026, 9:00:00 PM
+T|0|do notes

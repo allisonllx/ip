@@ -1,7 +1,6 @@
 package allison;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Parser {
@@ -97,17 +96,17 @@ public class Parser {
         return Integer.parseInt(parts[1]);
     }
 
-    public String parseTodo(String command) {
+    public String parseTodoDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
-        return parts[1];
+        return parts[1].trim();
     }
 
     public String parseDeadlineDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
         String[] bySplitParts = parts[1].split("/by");
-        return bySplitParts[0];
+        return bySplitParts[0].trim();
     }
 
     public ArrayList<String> parseDeadlineArgs(String command) {
@@ -121,7 +120,7 @@ public class Parser {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
         String[] fromSplitParts = parts[1].split("/from");
-        return fromSplitParts[0];
+        return fromSplitParts[0].trim();
     }
 
     public ArrayList<String> parseEventArgs(String command) {
@@ -129,6 +128,6 @@ public class Parser {
         String[] parts = trimmedCommand.split(" ", 2);
         String[] fromSplitParts = parts[1].split("/from");
         String[] toSplitParts = fromSplitParts[1].split("/to");
-        return new ArrayList<>(List.of(toSplitParts[0], toSplitParts[1]));
+        return new ArrayList<>(List.of(toSplitParts[0].trim(), toSplitParts[1].trim()));
     }
 }

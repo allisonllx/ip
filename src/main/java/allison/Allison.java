@@ -3,6 +3,7 @@ package allison;
 import java.io.FileNotFoundException;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import allison.task.Task;
@@ -11,155 +12,144 @@ import allison.task.Deadline;
 import allison.task.Event;
 
 public class Allison {
+    private static final String FILE_PATH = "data/allison.txt";
+    private Storage storage;
+    private TaskList taskList;
+    private Ui ui;
+
+    public Allison() {
+        this.storage = new Storage(FILE_PATH);
+        this.ui = new Ui();
+        this.taskList = new TaskList(this.storage.load());
+    }
+
+    public String greetUser() {
+        return ui.welcomeMessage();
+    }
+
+    public String exitUser() {
+        return ui.exitMessage();
+    }
+
+    public String showError(String text) {
+        return ui.errorMessage(text);
+    }
+
+    public String showError(Exception e) {
+        return ui.errorMessage(e);
+    }
+
+    public String listTasks() {
+        return ui.listTasks(this.taskList);
+    }
+
+    public String markTask(int taskNum) {
+        Task task = taskList.markTask(taskNum);
+        return ui.markTask(task);
+    }
+
+    public String unmarkTask(int taskNum) {
+        Task task = taskList.unmarkTask(taskNum);
+        return ui.unmarkTask(task);
+    }
+
+    public String deleteTask(int taskNum) {
+        Task task = taskList.removeTask(taskNum);
+        return ui.deleteTask(task, taskList.getNumTasks());
+    }
+
+    public String addTodo(String desc) {
+        Todo todo = new Todo(desc);
+        taskList.addTask(todo);
+        return ui.addTask(todo, taskList.getNumTasks());
+    }
+
+    public String addDeadline(String desc, ArrayList<String> args) {
+        try {
+            LocalDateTime dueDate = LocalDateTime.parse(args.get(0));
+            Deadline deadline = new Deadline(desc, dueDate);
+            taskList.addTask(deadline);
+            return ui.addTask(deadline, taskList.getNumTasks());
+        } catch (DateTimeParseException e) {
+            return ui.errorMessage(e);
+        }
+    }
+
+    public String addEvent(String desc, ArrayList<String> args) {
+        try {
+            LocalDateTime start = LocalDateTime.parse(args.get(0));
+            LocalDateTime end = LocalDateTime.parse(args.get(1));
+            Event event = new Event(desc, start, end);
+            taskList.addTask(event);
+            return ui.addTask(event, taskList.getNumTasks());
+        } catch (DateTimeParseException e) {
+            return ui.errorMessage(e);
+        }
+    }
+
+    public void saveTasks() {
+        storage.saveTasks(taskList.getTasks());
+    }
+
     public static void main(String[] args) throws AllisonException, FileNotFoundException {
+        Allison allison = new Allison();
+        Parser parser = new Parser();
         Scanner sc = new Scanner(System.in);
-        Storage storage = new Storage("data/allison.txt");
-        ArrayList<Task> list = storage.load();
         boolean running = true;
 
-        System.out.println("_".repeat(60));
-        System.out.println("Hello! I'm Allison.\nWhat can I do for you?");
-        System.out.println("_".repeat(60));
+        System.out.println(allison.greetUser());
 
-        String text = "";
-        while (running) { // loop until user types "bye"
-            text = sc.nextLine();
-            System.out.println("_".repeat(60));
+        while (running) {
+            String text = sc.nextLine();
+            String botMessage;
+            try {
+                Command command = parser.parseCommand(text);
 
-            if (text.trim().equalsIgnoreCase("bye")) {
-                System.out.println("Bye. Hope to see you again soon!");
-                running = false;
-            } else if (text.trim().equalsIgnoreCase("list")) {
-                System.out.println("Here are the tasks in your list:");
-                for (int i = 0; i < list.size(); i++) {
-                    if (list.get(i) != null) {
-                        System.out.println(i+1 + ". " + list.get(i));
-                    }
+                switch (command) {
+                case BYE:
+                    botMessage = allison.exitUser();
+                    running = false;
+                    return;
+                case LIST:
+                    botMessage = allison.listTasks();
+                    break;
+                case MARK:
+                    int markTaskNum = parser.parseTaskNum(text);
+                    botMessage = allison.markTask(markTaskNum);
+                    break;
+                case UNMARK:
+                    int unmarkTaskNum = parser.parseTaskNum(text);
+                    botMessage = allison.unmarkTask(unmarkTaskNum);
+                    break;
+                case DELETE:
+                    int deleteTaskNum = parser.parseTaskNum(text);
+                    botMessage = allison.deleteTask(deleteTaskNum);
+                    break;
+                case TODO:
+                    String todoDesc = parser.parseTodoDesc(text);
+                    botMessage = allison.addTodo(todoDesc);
+                    break;
+                case DEADLINE:
+                    String deadlineDesc = parser.parseDeadlineDesc(text);
+                    ArrayList<String> deadlineArgs = parser.parseDeadlineArgs(text);
+                    botMessage = allison.addDeadline(deadlineDesc, deadlineArgs);
+                    break;
+                case EVENT:
+                    String eventDesc = parser.parseEventDesc(text);
+                    ArrayList<String> eventArgs = parser.parseEventArgs(text);
+                    botMessage = allison.addEvent(eventDesc, eventArgs);
+                    break;
+                default:
+                    botMessage = allison.showError(text);
                 }
-            } else if (text.toLowerCase().startsWith("mark")) {
-                String[] parts = text.split(" ", 2);
-                if (parts.length == 2) {
-                    try {
-                        int taskNumber = Integer.parseInt(parts[1]); // convert string to int
-                        System.out.println("Nice! I've marked this task as done:");
-                        list.get(taskNumber - 1).markAsDone();
-                        System.out.println(list.get(taskNumber - 1));
-                    } catch (NumberFormatException e) {
-                        throw new AllisonException("Invalid number after 'mark'", "mark <task number>");
-                    }
-                } else {
-                    throw new AllisonException("Missing task number", "mark <task number>");
-                    }
-            } else if (text.toLowerCase().startsWith("unmark")) {
-                String[] parts = text.split(" ", 2);
-                if (parts.length == 2) {
-                    try {
-                        int taskNumber = Integer.parseInt(parts[1]); // convert string to int
-                        System.out.println("OK, I've marked this task as not done yet:");
-                        list.get(taskNumber - 1).markAsUndone();
-                        System.out.println(list.get(taskNumber - 1));
-                    } catch (NumberFormatException e) {
-                        throw new AllisonException("Invalid number after 'unmark'", "unmark <task number>");
-                    }
-                } else {
-                    throw new AllisonException("Missing task number", "unmark <task number>");
-                }
-            } else if (text.toLowerCase().startsWith("delete")) {
-                String[] parts = text.split(" ", 2);
-                if (parts.length == 2) {
-                    try {
-                        int taskNumber = Integer.parseInt(parts[1]); // convert string to int
-                        System.out.println("Noted. I've removed this task:");
-                        System.out.println(list.get(taskNumber - 1));
-                        list.remove(taskNumber - 1);
-                        System.out.println("Now you have " + list.size() + " tasks in the list.");
-                    } catch (NumberFormatException e) {
-                        throw new AllisonException("Invalid number after 'delete'", "delete <task number>");
-                    }
-                } else {
-                    throw new AllisonException("Missing task number", "delete <task number>");
-                }
-            } else if (text.toLowerCase().startsWith("todo")) {
-                String[] parts = text.split(" ", 2);
-                Todo todo = null;
-                if (parts.length == 2) {
-                    String taskDesc = parts[1].trim();
-                    todo = new Todo(taskDesc);
-                } else {
-                    throw new AllisonException("Missing description in todo", "todo <description>");
-                }
-                list.add(todo);
-
-                System.out.println("Got it. I've added this task:");
-                System.out.println(todo);
-                System.out.println("Now you have " + list.size() + " tasks in the list.");
-            } else if (text.toLowerCase().startsWith("deadline")) {
-                if (!text.contains("/by")) {
-                    throw new AllisonException("Missing /by in deadline", "deadline <task> /by <time>");
-                }
-
-                String[] parts = text.split("/by", 2);
-                Deadline deadline = null;
-                if (parts.length == 2) {
-                    String description = parts[0]
-                            .replaceFirst("deadline", "")
-                            .trim();
-                    if (description.isEmpty()) {
-                        throw new AllisonException("Missing description in deadline", "deadline <task> /by <time>");
-                    }
-//                    String by = parts[1].trim();
-                    try {
-                        LocalDateTime by = LocalDateTime.parse(parts[1].trim());
-                        deadline = new Deadline(description, by);
-                    } catch (DateTimeParseException e) {
-                        System.out.println("Invalid date/time format. Use yyyy-MM-ddTHH:mm");
-                    }
-                } else {
-                    throw new AllisonException("Missing due date in deadline", "deadline <task> /by <time>");
-                }
-                list.add(deadline);
-
-                System.out.println("Got it. I've added this task:");
-                System.out.println(deadline);
-                System.out.println("Now you have " + list.size() + " tasks in the list.");
-            } else if (text.toLowerCase().startsWith("event")) {
-                if (!text.contains("/from") || !text.contains("/to")) {
-                    throw new AllisonException("Missing /from or /to in event", "event <desc> /from <start> /to <end>");
-                }
-
-                String withoutEvent = text.substring(5).trim(); // remove "event "
-                String[] firstSplit = withoutEvent.split("/from", 2);
-
-                String description = firstSplit[0].trim();
-                if (description.isEmpty()) {
-                    throw new AllisonException("Missing description in deadline", "deadline <task> /by <time>");
-                }
-                String[] timeSplit = firstSplit[1].split("/to", 2);
-
-//                String from = timeSplit[0].trim();
-//                String to = timeSplit[1].trim();
-
-                try {
-                    LocalDateTime from = LocalDateTime.parse(timeSplit[0].trim());
-                    LocalDateTime to = LocalDateTime.parse(timeSplit[1].trim());
-
-                    Event event = new Event(description, from, to);
-                    list.add(event);
-
-                    System.out.println("Got it. I've added this task:");
-                    System.out.println(event);
-                    System.out.println("Now you have " + list.size() + " tasks in the list.");
-                } catch (DateTimeParseException e) {
-                    System.out.println("Invalid date/time format. Use yyyy-MM-ddTHH:mm");
-                }
-            } else {
-                throw new AllisonException();
+            } catch (Exception e) {
+                botMessage = allison.showError(e);
             }
 
-            System.out.println("_".repeat(60));
+            System.out.println(botMessage);
+            allison.saveTasks();
         }
 
-        storage.saveTasks(list);
         sc.close();
     }
 }
