@@ -1,5 +1,6 @@
 package allison;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import allison.task.Task;
 
@@ -46,5 +47,11 @@ public class Ui {
     public String deleteTask(Task task, int numTasks) {
         return SEPARATOR + "\n" + "Noted. I've removed this task:\n" + task.toString() + "\n"
                 + "Now you have " + numTasks + " tasks in the list." + "\n" + SEPARATOR;
+    }
+
+    public String findTask(ArrayList<Task> tasks) {
+        TaskList taskList = new TaskList(tasks);
+        return SEPARATOR + "\n" + "Here are the matching tasks in your list:\n"
+                + taskList.listTasks() + "\n" + SEPARATOR;
     }
 }
