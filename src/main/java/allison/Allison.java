@@ -43,17 +43,17 @@ public class Allison {
         return ui.listTasks(this.taskList);
     }
 
-    public String markTask(int taskNum) {
+    public String markTask(int taskNum) throws AllisonException {
         Task task = taskList.markTask(taskNum);
         return ui.markTask(task);
     }
 
-    public String unmarkTask(int taskNum) {
+    public String unmarkTask(int taskNum) throws AllisonException {
         Task task = taskList.unmarkTask(taskNum);
         return ui.unmarkTask(task);
     }
 
-    public String deleteTask(int taskNum) {
+    public String deleteTask(int taskNum) throws AllisonException {
         Task task = taskList.removeTask(taskNum);
         return ui.deleteTask(task, taskList.getNumTasks());
     }

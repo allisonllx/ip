@@ -22,18 +22,27 @@ public class TaskList {
         this.tasks.add(task);
     }
 
-    public Task removeTask(int taskNum) {
+    public Task removeTask(int taskNum) throws AllisonException {
+        if (taskNum > getNumTasks() || taskNum < 0) {
+            throw new AllisonException("taskNum out of range", "mark <task number>");
+        }
         Task task = this.tasks.get(taskNum - 1);
         this.tasks.remove(taskNum - 1);
         return task;
     }
 
-    public Task markTask(int taskNum) {
+    public Task markTask(int taskNum) throws AllisonException {
+        if (taskNum > getNumTasks() || taskNum < 0) {
+            throw new AllisonException("taskNum out of range", "mark <task number>");
+        }
         this.tasks.get(taskNum - 1).markAsDone();
         return this.tasks.get(taskNum - 1);
     }
 
-    public Task unmarkTask(int taskNum) {
+    public Task unmarkTask(int taskNum) throws AllisonException {
+        if (taskNum > getNumTasks() || taskNum < 0) {
+            throw new AllisonException("taskNum out of range", "mark <task number>");
+        }
         this.tasks.get(taskNum - 1).markAsUndone();
         return this.tasks.get(taskNum - 1);
     }

@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 
@@ -23,7 +22,7 @@ public class Storage {
     }
 
     public ArrayList<Task> load() {
-        ArrayList<Task> tasks = new ArrayList<Task>();
+        ArrayList<Task> tasks = new ArrayList<>();
         File f = new File(filePath);
         File parentDir = f.getParentFile();
         if (!parentDir.exists()) {
@@ -90,8 +89,6 @@ public class Storage {
                     System.out.println("Invalid date/time format. Use yyyy-MM-ddTHH:mm");
                     return null;
                 }
-//                String dueDate = parts[3];
-//                task = new Deadline(description, dueDate);
                 break;
             case "E":
                 try {
@@ -102,9 +99,6 @@ public class Storage {
                     System.out.println("Invalid date/time format. Use yyyy-MM-ddTHH:mm");
                     return null;
                 }
-//                String start = parts[3];
-//                String end = parts[4];
-//                task = new Event(description, start, end);
                 break;
             default:
                 return null;
