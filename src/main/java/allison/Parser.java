@@ -3,11 +3,26 @@ package allison;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Parses user input strings into executable commands and extracts
+ * relevant arguments required by the application.
+ */
 public class Parser {
 
+    /**
+     * Constructs a Parser instance.
+     */
     public Parser() {
     }
 
+    /**
+     * Returns the command type represented by the given user input.
+     * Performs validation on command format and required arguments.
+     *
+     * @param command Full user input string.
+     * @return Parsed Command enum.
+     * @throws AllisonException If the command is invalid or malformed.
+     */
     public Command parseCommand(String command) throws AllisonException {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
@@ -90,18 +105,36 @@ public class Parser {
         }
     }
 
+    /**
+     * Returns the task number specified in the given command.
+     *
+     * @param command Full user input string.
+     * @return Parsed task number.
+     */
     public int parseTaskNum(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
         return Integer.parseInt(parts[1]);
     }
 
+    /**
+     * Returns the description of a todo task.
+     *
+     * @param command Full user input string.
+     * @return Todo description.
+     */
     public String parseTodoDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
         return parts[1].trim();
     }
 
+    /**
+     * Returns the description portion of a deadline task.
+     *
+     * @param command Full user input string.
+     * @return Deadline task description.
+     */
     public String parseDeadlineDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
@@ -109,6 +142,12 @@ public class Parser {
         return bySplitParts[0].trim();
     }
 
+    /**
+     * Returns the arguments associated with a deadline task.
+     *
+     * @param command Full user input string.
+     * @return List containing the deadline date/time.
+     */
     public ArrayList<String> parseDeadlineArgs(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
@@ -116,6 +155,12 @@ public class Parser {
         return new ArrayList<>(List.of(bySplitParts[1].trim()));
     }
 
+    /**
+     * Returns the description portion of an event task.
+     *
+     * @param command Full user input string.
+     * @return Event task description.
+     */
     public String parseEventDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
@@ -123,6 +168,12 @@ public class Parser {
         return fromSplitParts[0].trim();
     }
 
+    /**
+     * Returns the arguments associated with an event task.
+     *
+     * @param command Full user input string.
+     * @return List containing event start and end date/time.
+     */
     public ArrayList<String> parseEventArgs(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
