@@ -12,13 +12,17 @@ public class Deadline extends Task {
         this.dueDate = dueDate;
     }
 
-    public String toDateString(LocalDateTime d) {
+    public String toLocalDateString(LocalDateTime d) {
         return d.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+    }
+
+    public String toDateString(LocalDateTime d) {
+        return d.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
     }
 
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + toDateString(dueDate) + ")";
+        return "[D]" + super.toString() + " (by: " + toLocalDateString(dueDate) + ")";
     }
 
     @Override

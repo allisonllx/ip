@@ -14,14 +14,18 @@ public class Event extends Task {
         this.end = end;
     }
 
-    public String toDateString(LocalDateTime d) {
+    public String toLocalDateString(LocalDateTime d) {
         return d.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
+    }
+
+    public String toDateString(LocalDateTime d) {
+        return d.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
     }
 
     @Override
     public String toString() {
         return "[E]" + super.toString()
-                + " (from: " + toDateString(start) + " to: " + toDateString(end) + ")";
+                + " (from: " + toLocalDateString(start) + " to: " + toLocalDateString(end) + ")";
     }
 
     @Override

@@ -1,3 +1,4 @@
 T|0|read book
-D|0|return book|mon 5pm
-D|0|birthday party|wed 2:30pm|6:30pm
+T|1|do notes
+T|0|send gift to xyz
+D|0|complete 3210|2026-01-30T23:59
