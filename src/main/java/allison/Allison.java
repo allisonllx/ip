@@ -114,6 +114,11 @@ public class Allison {
         return ui.deleteTask(task, taskList.getNumTasks());
     }
 
+    public String findTask(String keyword) {
+        ArrayList<Task> tasks = taskList.findTasks(keyword);
+        return ui.findTask(tasks);
+    }
+
     /**
      * Adds a todo task with the given description.
      *
@@ -208,6 +213,10 @@ public class Allison {
                 case DELETE:
                     int deleteTaskNum = parser.parseTaskNum(text);
                     botMessage = allison.deleteTask(deleteTaskNum);
+                    break;
+                case FIND:
+                    String keyword = parser.parseFindKeyword(text);
+                    botMessage = allison.findTask(keyword);
                     break;
                 case TODO:
                     String todoDesc = parser.parseTodoDesc(text);

@@ -100,6 +100,11 @@ public class Parser {
                 throw new AllisonException("Invalid input after 'delete'", "delete <task number>");
             }
             return Command.DELETE;
+        case "find":
+            if (parts.length < 2) {
+                throw new AllisonException("Missing keyword", "find <keyword>");
+            }
+            return Command.FIND;
         default:
             throw new AllisonException();
         }
@@ -115,6 +120,12 @@ public class Parser {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
         return Integer.parseInt(parts[1]);
+    }
+
+    public String parseFindKeyword(String command) {
+        String trimmedCommand = command.trim();
+        String[] parts = trimmedCommand.split(" ", 2);
+        return parts[1].trim();
     }
 
     /**
