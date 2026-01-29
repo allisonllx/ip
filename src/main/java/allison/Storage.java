@@ -14,13 +14,27 @@ import allison.task.Todo;
 import allison.task.Deadline;
 import allison.task.Event;
 
+/**
+ * Handles persistent storage of tasks by loading from and saving to a file.
+ */
 public class Storage {
     private final String filePath;
 
+    /**
+     * Constructs a Storage instance that reads from and writes to the specified file path.
+     *
+     * @param filePath File path used for task storage.
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Returns a list of tasks loaded from the storage file.
+     * Creates the storage directory if it does not exist.
+     *
+     * @return List of tasks loaded from file.
+     */
     public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
         File f = new File(filePath);
@@ -51,6 +65,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Saves the given list of tasks to the storage file.
+     * Overwrites any existing file content.
+     *
+     * @param tasks List of tasks to be saved.
+     */
     public void saveTasks(ArrayList<Task> tasks) {
         File f = new File(this.filePath);
         File parentDir = f.getParentFile();
@@ -70,6 +90,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Returns a Task reconstructed from a single line in the storage file.
+     *
+     * @param line Line read from the storage file.
+     * @return Parsed Task object, or null if parsing fails.
+     */
     public Task parseTask(String line) {
         String[] parts = line.split("\\|");
         String type = parts[0];

@@ -11,59 +11,128 @@ import allison.task.Todo;
 import allison.task.Deadline;
 import allison.task.Event;
 
+/**
+ * Represents the main entry point and controller of the Allison task management application.
+ * This class coordinates user input, task operations, storage, and UI output.
+ */
 public class Allison {
     private static final String FILE_PATH = "data/allison.txt";
     private Storage storage;
     private TaskList taskList;
     private Ui ui;
 
+    /**
+     * Creates a new Allison application instance and initializes storage,
+     * task list, and UI components.
+     */
     public Allison() {
         this.storage = new Storage(FILE_PATH);
         this.ui = new Ui();
         this.taskList = new TaskList(this.storage.load());
     }
 
+    /**
+     * Returns the welcome message shown to the user when the application starts.
+     *
+     * @return Welcome message string.
+     */
     public String greetUser() {
         return ui.welcomeMessage();
     }
 
+    /**
+     * Returns the exit message shown to the user when the application terminates.
+     *
+     * @return Exit message string.
+     */
     public String exitUser() {
         return ui.exitMessage();
     }
 
+    /**
+     * Returns an error message based on the provided input string.
+     *
+     * @param text Input that caused the error.
+     * @return Error message string.
+     */
     public String showError(String text) {
         return ui.errorMessage(text);
     }
 
+    /**
+     * Returns an error message based on the provided exception.
+     *
+     * @param e Exception that occurred.
+     * @return Error message string.
+     */
     public String showError(Exception e) {
         return ui.errorMessage(e);
     }
 
+    /**
+     * Returns a formatted list of all tasks currently stored in the task list.
+     *
+     * @return String representation of the task list.
+     */
     public String listTasks() {
         return ui.listTasks(this.taskList);
     }
 
+    /**
+     * Marks the specified task as done.
+     *
+     * @param taskNum Task number to mark.
+     * @return Confirmation message string.
+     * @throws AllisonException If the task number is invalid.
+     */
     public String markTask(int taskNum) throws AllisonException {
         Task task = taskList.markTask(taskNum);
         return ui.markTask(task);
     }
 
+    /**
+     * Marks the specified task as not done.
+     *
+     * @param taskNum Task number to unmark.
+     * @return Confirmation message string.
+     * @throws AllisonException If the task number is invalid.
+     */
     public String unmarkTask(int taskNum) throws AllisonException {
         Task task = taskList.unmarkTask(taskNum);
         return ui.unmarkTask(task);
     }
 
+    /**
+     * Deletes the specified task from the task list.
+     *
+     * @param taskNum Task number to delete.
+     * @return Confirmation message string.
+     * @throws AllisonException If the task number is invalid.
+     */
     public String deleteTask(int taskNum) throws AllisonException {
         Task task = taskList.removeTask(taskNum);
         return ui.deleteTask(task, taskList.getNumTasks());
     }
 
+    /**
+     * Adds a todo task with the given description.
+     *
+     * @param desc Description of the todo task.
+     * @return Confirmation message string.
+     */
     public String addTodo(String desc) {
         Todo todo = new Todo(desc);
         taskList.addTask(todo);
         return ui.addTask(todo, taskList.getNumTasks());
     }
 
+    /**
+     * Adds a deadline task with the given description and deadline arguments.
+     *
+     * @param desc Description of the deadline task.
+     * @param args List containing deadline date-time arguments.
+     * @return Confirmation or error message string.
+     */
     public String addDeadline(String desc, ArrayList<String> args) {
         try {
             LocalDateTime dueDate = LocalDateTime.parse(args.get(0));
@@ -75,6 +144,13 @@ public class Allison {
         }
     }
 
+    /**
+     * Adds an event task with the given description and event time arguments.
+     *
+     * @param desc Description of the event task.
+     * @param args List containing start and end date-time arguments.
+     * @return Confirmation or error message string.
+     */
     public String addEvent(String desc, ArrayList<String> args) {
         try {
             LocalDateTime start = LocalDateTime.parse(args.get(0));
@@ -87,11 +163,19 @@ public class Allison {
         }
     }
 
+    /**
+     * Saves all current tasks to persistent storage.
+     */
     public void saveTasks() {
         storage.saveTasks(taskList.getTasks());
     }
 
-    public static void main(String[] args) throws AllisonException, FileNotFoundException {
+    /**
+     * Runs the Allison application and handles user interaction.
+     *
+     * @param args Command-line arguments.
+     */
+    public static void main(String[] args) {
         Allison allison = new Allison();
         Parser parser = new Parser();
         Scanner sc = new Scanner(System.in);
