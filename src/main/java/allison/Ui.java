@@ -18,7 +18,7 @@ public class Ui {
      * @return Welcome message string
      */
     public String welcomeMessage() {
-        return SEPARATOR + "\n" + "Hello! I'm Allison.\nWhat can I do for you?" + "\n" + SEPARATOR;
+        return "Hello! I'm Allison.\nWhat can I do for you?";
     }
 
     /**
@@ -27,7 +27,7 @@ public class Ui {
      * @return Exit message string
      */
     public String exitMessage() {
-        return SEPARATOR + "\n" + "Bye. Hope to see you again soon!" + "\n" + SEPARATOR;
+        return "Bye. Hope to see you again soon!";
     }
 
     /**
@@ -37,7 +37,7 @@ public class Ui {
      * @return Formatted error message
      */
     public String errorMessage(Exception e) {
-        return SEPARATOR + "\n" + e.getMessage() + "\n" + SEPARATOR;
+        return e.getMessage();
     }
 
     /**
@@ -47,7 +47,7 @@ public class Ui {
      * @return Formatted error message
      */
     public String errorMessage(String text) {
-        return SEPARATOR + "\n" + text + "\n" + SEPARATOR;
+        return text;
     }
 
     /**
@@ -57,8 +57,7 @@ public class Ui {
      * @return Formatted task list message
      */
     public String listTasks(TaskList tasks) {
-        return SEPARATOR + "\n" + "Here are the tasks in your list:"
-                + "\n" + tasks.listTasks() + "\n" + SEPARATOR;
+        return "Here are the tasks in your list:" + "\n" + tasks.listTasks();
     }
 
     /**
@@ -69,8 +68,8 @@ public class Ui {
      * @return Formatted add-task message
      */
     public String addTask(Task task, int numTasks) {
-        return SEPARATOR + "\n" + "Got it. I've added this task:\n" + task.toString() + "\n"
-                + "Now you have " + numTasks + " tasks in the list." + "\n" + SEPARATOR;
+        return "Got it. I've added this task:\n" + task.toString() + "\n"
+                + "Now you have " + numTasks + " tasks in the list.";
     }
 
     /**
@@ -80,8 +79,7 @@ public class Ui {
      * @return Formatted mark-task message
      */
     public String markTask(Task task) {
-        return SEPARATOR + "\n" + "Nice! I've marked this task as done:\n"
-                + task.toString() + "\n" + SEPARATOR;
+        return "Nice! I've marked this task as done:\n" + task.toString();
     }
 
     /**
@@ -91,8 +89,7 @@ public class Ui {
      * @return Formatted unmark-task message
      */
     public String unmarkTask(Task task) {
-        return SEPARATOR + "\n" + "OK, I've marked this task as not done yet:\n"
-                + task.toString() + "\n" + SEPARATOR;
+        return "OK, I've marked this task as not done yet:\n" + task.toString();
     }
 
     /**
@@ -103,13 +100,12 @@ public class Ui {
      * @return Formatted delete-task message
      */
     public String deleteTask(Task task, int numTasks) {
-        return SEPARATOR + "\n" + "Noted. I've removed this task:\n" + task.toString() + "\n"
-                + "Now you have " + numTasks + " tasks in the list." + "\n" + SEPARATOR;
+        return "Noted. I've removed this task:\n" + task.toString() + "\n"
+                + "Now you have " + numTasks + " tasks in the list.";
     }
 
     public String findTask(ArrayList<Task> tasks) {
         TaskList taskList = new TaskList(tasks);
-        return SEPARATOR + "\n" + "Here are the matching tasks in your list:\n"
-                + taskList.listTasks() + "\n" + SEPARATOR;
+        return "Here are the matching tasks in your list:\n" + taskList.listTasks();
     }
 }

@@ -20,6 +20,7 @@ public class Allison {
     private Storage storage;
     private TaskList taskList;
     private Ui ui;
+    private Parser parser;
 
     /**
      * Creates a new Allison application instance and initializes storage,
@@ -29,6 +30,7 @@ public class Allison {
         this.storage = new Storage(FILE_PATH);
         this.ui = new Ui();
         this.taskList = new TaskList(this.storage.load());
+        this.parser = new Parser();
     }
 
     /**
@@ -175,6 +177,58 @@ public class Allison {
         storage.saveTasks(taskList.getTasks());
     }
 
+
+    public String getResponse(String input) {
+        String botMessage;
+        try {
+            Command command = parser.parseCommand(input);
+
+            switch (command) {
+            case BYE:
+                botMessage = exitUser();
+                break;
+            case LIST:
+                botMessage = listTasks();
+                break;
+            case MARK:
+                int markTaskNum = parser.parseTaskNum(input);
+                botMessage = markTask(markTaskNum);
+                break;
+            case UNMARK:
+                int unmarkTaskNum = parser.parseTaskNum(input);
+                botMessage = unmarkTask(unmarkTaskNum);
+                break;
+            case DELETE:
+                int deleteTaskNum = parser.parseTaskNum(input);
+                botMessage = deleteTask(deleteTaskNum);
+                break;
+            case FIND:
+                String keyword = parser.parseFindKeyword(input);
+                botMessage = findTask(keyword);
+                break;
+            case TODO:
+                String todoDesc = parser.parseTodoDesc(input);
+                botMessage = addTodo(todoDesc);
+                break;
+            case DEADLINE:
+                String deadlineDesc = parser.parseDeadlineDesc(input);
+                ArrayList<String> deadlineArgs = parser.parseDeadlineArgs(input);
+                botMessage = addDeadline(deadlineDesc, deadlineArgs);
+                break;
+            case EVENT:
+                String eventDesc = parser.parseEventDesc(input);
+                ArrayList<String> eventArgs = parser.parseEventArgs(input);
+                botMessage = addEvent(eventDesc, eventArgs);
+                break;
+            default:
+                botMessage = showError(input);
+            }
+        } catch (Exception e) {
+            botMessage = showError(e);
+        }
+        return botMessage;
+    }
+
     /**
      * Runs the Allison application and handles user interaction.
      *
@@ -187,7 +241,6 @@ public class Allison {
         boolean running = true;
 
         System.out.println(allison.greetUser());
-
         while (running) {
             String text = sc.nextLine();
             String botMessage;
@@ -198,7 +251,7 @@ public class Allison {
                 case BYE:
                     botMessage = allison.exitUser();
                     running = false;
-                    return;
+                    break;
                 case LIST:
                     botMessage = allison.listTasks();
                     break;
