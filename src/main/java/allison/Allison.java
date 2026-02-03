@@ -186,6 +186,7 @@ public class Allison {
             switch (command) {
             case BYE:
                 botMessage = exitUser();
+                break;
             case LIST:
                 botMessage = listTasks();
                 break;
@@ -250,7 +251,7 @@ public class Allison {
                 case BYE:
                     botMessage = allison.exitUser();
                     running = false;
-                    return;
+                    break;
                 case LIST:
                     botMessage = allison.listTasks();
                     break;
