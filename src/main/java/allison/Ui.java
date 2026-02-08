@@ -68,6 +68,7 @@ public class Ui {
      * @return Formatted add-task message
      */
     public String addTask(Task task, int numTasks) {
+        assert task != null;
         return "Got it. I've added this task:\n" + task.toString() + "\n"
                 + "Now you have " + numTasks + " tasks in the list.";
     }
@@ -79,6 +80,7 @@ public class Ui {
      * @return Formatted mark-task message
      */
     public String markTask(Task task) {
+        assert task != null;
         return "Nice! I've marked this task as done:\n" + task.toString();
     }
 
@@ -89,6 +91,7 @@ public class Ui {
      * @return Formatted unmark-task message
      */
     public String unmarkTask(Task task) {
+        assert task != null;
         return "OK, I've marked this task as not done yet:\n" + task.toString();
     }
 
@@ -100,6 +103,7 @@ public class Ui {
      * @return Formatted delete-task message
      */
     public String deleteTask(Task task, int numTasks) {
+        assert task != null;
         return "Noted. I've removed this task:\n" + task.toString() + "\n"
                 + "Now you have " + numTasks + " tasks in the list.";
     }
