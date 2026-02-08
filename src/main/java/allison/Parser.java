@@ -131,19 +131,25 @@ public class Parser {
     public int parseTaskNum(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
+
         assert parts[0].trim().equals(MARK_COMMAND)
                 || parts[0].trim().equals(UNMARK_COMMAND)
                 || parts[0].trim().equals(DELETE_COMMAND);
         assert parts.length > 1 && parts[1].matches("\\d+");
-        return Integer.parseInt(parts[1]);
+
+        String taskNum = parts[1];
+        return Integer.parseInt(taskNum);
     }
 
     public String parseFindKeyword(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
+
         assert parts[0].trim().equals(FIND_COMMAND);
         assert parts.length > 1;
-        return parts[1].trim();
+
+        String keyword = parts[1];
+        return keyword.trim();
     }
 
     /**
@@ -155,9 +161,12 @@ public class Parser {
     public String parseTodoDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
+
         assert parts[0].trim().equals(TODO_COMMAND);
         assert parts.length > 1;
-        return parts[1].trim();
+
+        String description = parts[1];
+        return description.trim();
     }
 
     /**
@@ -169,11 +178,14 @@ public class Parser {
     public String parseDeadlineDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
+
         assert parts[0].trim().equals(DEADLINE_COMMAND);
         assert parts[0].trim().contains(BY_KEYWORD);
         assert parts.length > 1;
         String[] bySplitParts = parts[1].split(BY_KEYWORD);
-        return bySplitParts[0].trim();
+
+        String description = bySplitParts[0];
+        return description.trim();
     }
 
     /**
@@ -185,11 +197,14 @@ public class Parser {
     public ArrayList<String> parseDeadlineArgs(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
+
         assert parts[0].trim().equals(DEADLINE_COMMAND);
         assert parts.length > 1;
         assert parts[1].trim().contains(BY_KEYWORD);
         String[] bySplitParts = parts[1].split(BY_KEYWORD);
-        return new ArrayList<>(List.of(bySplitParts[1].trim()));
+
+        String byArgs = bySplitParts[1].trim();
+        return new ArrayList<>(List.of(byArgs));
     }
 
     /**
@@ -201,11 +216,14 @@ public class Parser {
     public String parseEventDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
+
         assert parts[0].trim().equals(EVENT_COMMAND);
         assert parts.length > 1;
         assert parts[1].trim().contains(FROM_KEYWORD);
         String[] fromSplitParts = parts[1].split(FROM_KEYWORD);
-        return fromSplitParts[0].trim();
+
+        String description = fromSplitParts[0];
+        return description.trim();
     }
 
     /**
@@ -217,12 +235,17 @@ public class Parser {
     public ArrayList<String> parseEventArgs(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
+
         assert parts[0].trim().equals(EVENT_COMMAND);
         assert parts.length > 1;
         assert parts[1].trim().contains(FROM_KEYWORD);
         assert parts[1].trim().contains(TO_KEYWORD);
+
         String[] fromSplitParts = parts[1].split(FROM_KEYWORD);
         String[] toSplitParts = fromSplitParts[1].split(TO_KEYWORD);
-        return new ArrayList<>(List.of(toSplitParts[0].trim(), toSplitParts[1].trim()));
+
+        String fromArgs = toSplitParts[0].trim();
+        String toArgs = toSplitParts[1].trim();
+        return new ArrayList<>(List.of(fromArgs, toArgs));
     }
 }

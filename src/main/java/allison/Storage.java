@@ -19,7 +19,9 @@ import allison.task.Event;
  */
 public class Storage {
     private final String filePath;
-
+    private static final String TODO_SHORTFORM = "T";
+    private static final String DEADLINE_SHORTFORM = "D";
+    private static final String EVENT_SHORTFORM = "E";
     /**
      * Constructs a Storage instance that reads from and writes to the specified file path.
      *
@@ -39,6 +41,7 @@ public class Storage {
         ArrayList<Task> tasks = new ArrayList<>();
         File f = new File(filePath);
         File parentDir = f.getParentFile();
+        // Create parent directory if it doesn't exist
         if (!parentDir.exists()) {
             parentDir.mkdirs();
         }
@@ -74,6 +77,7 @@ public class Storage {
     public void saveTasks(ArrayList<Task> tasks) {
         File f = new File(this.filePath);
         File parentDir = f.getParentFile();
+        // Create a parent directory if it doesn't exist
         if (!parentDir.exists()) {
             parentDir.mkdirs();
         }
@@ -82,6 +86,7 @@ public class Storage {
             FileWriter fw = new FileWriter(filePath);
 
             for (Task task : tasks) {
+                // Save each task on a new line
                 fw.write(task.toFileString() + System.lineSeparator());
             }
             fw.close();
@@ -104,19 +109,19 @@ public class Storage {
 
         Task task;
         switch (type) {
-            case "T":
+        case TODO_SHORTFORM:
                 task = new Todo(description);
                 break;
-            case "D":
+        case DEADLINE_SHORTFORM:
                 try {
-                    LocalDateTime dueDate = LocalDateTime.parse(parts[3]);
-                    task = new Deadline(description, dueDate);
+                    LocalDateTime dueDateTime = LocalDateTime.parse(parts[3]);
+                    task = new Deadline(description, dueDateTime);
                 } catch (DateTimeParseException e) {
                     System.out.println("Invalid date/time format. Use yyyy-MM-ddTHH:mm");
                     return null;
                 }
                 break;
-            case "E":
+        case EVENT_SHORTFORM:
                 try {
                     LocalDateTime start = LocalDateTime.parse(parts[3]);
                     LocalDateTime end = LocalDateTime.parse(parts[4]);
