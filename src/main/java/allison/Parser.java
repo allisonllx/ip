@@ -8,6 +8,18 @@ import java.util.List;
  * relevant arguments required by the application.
  */
 public class Parser {
+    private static final String BYE_COMMAND = "bye";
+    private static final String LIST_COMMAND = "list";
+    private static final String MARK_COMMAND = "mark";
+    private static final String UNMARK_COMMAND = "unmark";
+    private static final String DELETE_COMMAND = "delete";
+    private static final String FIND_COMMAND = "find";
+    private static final String TODO_COMMAND = "todo";
+    private static final String DEADLINE_COMMAND = "deadline";
+    private static final String EVENT_COMMAND = "event";
+    private static final String BY_KEYWORD = "/by";
+    private static final String FROM_KEYWORD = "/from";
+    private static final String TO_KEYWORD = "/to";
 
     /**
      * Constructs a Parser instance.
@@ -28,49 +40,49 @@ public class Parser {
         String[] parts = trimmedCommand.split(" ", 2);
         String keyword = parts[0].toLowerCase();
         switch (keyword) {
-        case "bye":
+        case BYE_COMMAND:
             return Command.BYE;
-        case "list":
+        case LIST_COMMAND:
             return Command.LIST;
-        case "todo":
+        case TODO_COMMAND:
             if (parts.length < 2) {
                 throw new AllisonException("Missing description in todo", "todo <description>");
             }
             return Command.TODO;
-        case "deadline":
-            if (!trimmedCommand.contains("/by")) {
+        case DEADLINE_COMMAND:
+            if (!trimmedCommand.contains(BY_KEYWORD)) {
                 throw new AllisonException("Missing /by in deadline", "deadline <task> /by <time>");
             }
             if (parts.length < 2) {
                 throw new AllisonException("Incomplete arguments", "deadline <task> /by <time>");
             }
-            if (parts[1].startsWith("/by")) {
+            if (parts[1].startsWith(BY_KEYWORD)) {
                 throw new AllisonException("Missing description in deadline", "deadline <task> /by <time>");
             }
-            if (parts[1].split("/by").length < 2) {
+            if (parts[1].split(BY_KEYWORD).length < 2) {
                 throw new AllisonException("Missing due date in deadline", "deadline <task> /by <time>");
             }
             return Command.DEADLINE;
-        case "event":
-            if (!trimmedCommand.contains("/from") || !trimmedCommand.contains("/to")) {
+        case EVENT_COMMAND:
+            if (!trimmedCommand.contains(FROM_KEYWORD) || !trimmedCommand.contains(TO_KEYWORD)) {
                 throw new AllisonException("Missing /from or /to in event", "event <desc> /from <start> /to <end>");
             }
             if (parts.length < 2) {
                 throw new AllisonException("Incomplete arguments", "event <desc> /from <start> /to <end>");
             }
-            if (parts[1].startsWith("/from")) {
+            if (parts[1].startsWith(FROM_KEYWORD)) {
                 throw new AllisonException("Missing description in event", "event <desc> /from <start> /to <end>");
             }
-            String[] fromSplitParts = parts[1].split("/from", 2);
-            if (fromSplitParts[1].startsWith("/to")) {
+            String[] fromSplitParts = parts[1].split(FROM_KEYWORD, 2);
+            if (fromSplitParts[1].startsWith(TO_KEYWORD)) {
                 throw new AllisonException("Missing start date/time in event", "event <desc> /from <start> /to <end>");
             }
-            String[] toSplitParts = fromSplitParts[1].split("/to", 2);
+            String[] toSplitParts = fromSplitParts[1].split(TO_KEYWORD, 2);
             if (toSplitParts[1].isEmpty()) {
                 throw new AllisonException("Missing enc date/time in event", "event <desc> /from <start> /to <end>");
             }
             return Command.EVENT;
-        case "mark":
+        case MARK_COMMAND:
             if (parts.length < 2) {
                 throw new AllisonException("Missing task number", "mark <task number>");
             }
@@ -80,7 +92,7 @@ public class Parser {
                 throw new AllisonException("Invalid input after 'mark'", "mark <task number>");
             }
             return Command.MARK;
-        case "unmark":
+        case UNMARK_COMMAND:
             if (parts.length < 2) {
                 throw new AllisonException("Missing task number", "unmark <task number>");
             }
@@ -90,7 +102,7 @@ public class Parser {
                 throw new AllisonException("Invalid input after 'unmark'", "unmark <task number>");
             }
             return Command.UNMARK;
-        case "delete":
+        case DELETE_COMMAND:
             if (parts.length < 2) {
                 throw new AllisonException("Missing task number", "delete <task number>");
             }
@@ -100,7 +112,7 @@ public class Parser {
                 throw new AllisonException("Invalid input after 'delete'", "delete <task number>");
             }
             return Command.DELETE;
-        case "find":
+        case FIND_COMMAND:
             if (parts.length < 2) {
                 throw new AllisonException("Missing keyword", "find <keyword>");
             }
@@ -119,12 +131,18 @@ public class Parser {
     public int parseTaskNum(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
+        assert parts[0].trim().equals(MARK_COMMAND)
+                || parts[0].trim().equals(UNMARK_COMMAND)
+                || parts[0].trim().equals(DELETE_COMMAND);
+        assert parts.length > 1 && parts[1].matches("\\d+");
         return Integer.parseInt(parts[1]);
     }
 
     public String parseFindKeyword(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
+        assert parts[0].trim().equals(FIND_COMMAND);
+        assert parts.length > 1;
         return parts[1].trim();
     }
 
@@ -137,6 +155,8 @@ public class Parser {
     public String parseTodoDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
+        assert parts[0].trim().equals(TODO_COMMAND);
+        assert parts.length > 1;
         return parts[1].trim();
     }
 
@@ -149,7 +169,10 @@ public class Parser {
     public String parseDeadlineDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
-        String[] bySplitParts = parts[1].split("/by");
+        assert parts[0].trim().equals(DEADLINE_COMMAND);
+        assert parts[0].trim().contains(BY_KEYWORD);
+        assert parts.length > 1;
+        String[] bySplitParts = parts[1].split(BY_KEYWORD);
         return bySplitParts[0].trim();
     }
 
@@ -162,7 +185,10 @@ public class Parser {
     public ArrayList<String> parseDeadlineArgs(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
-        String[] bySplitParts = parts[1].split("/by");
+        assert parts[0].trim().equals(DEADLINE_COMMAND);
+        assert parts.length > 1;
+        assert parts[1].trim().contains(BY_KEYWORD);
+        String[] bySplitParts = parts[1].split(BY_KEYWORD);
         return new ArrayList<>(List.of(bySplitParts[1].trim()));
     }
 
@@ -175,7 +201,10 @@ public class Parser {
     public String parseEventDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
-        String[] fromSplitParts = parts[1].split("/from");
+        assert parts[0].trim().equals(EVENT_COMMAND);
+        assert parts.length > 1;
+        assert parts[1].trim().contains(FROM_KEYWORD);
+        String[] fromSplitParts = parts[1].split(FROM_KEYWORD);
         return fromSplitParts[0].trim();
     }
 
@@ -188,8 +217,12 @@ public class Parser {
     public ArrayList<String> parseEventArgs(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
-        String[] fromSplitParts = parts[1].split("/from");
-        String[] toSplitParts = fromSplitParts[1].split("/to");
+        assert parts[0].trim().equals(EVENT_COMMAND);
+        assert parts.length > 1;
+        assert parts[1].trim().contains(FROM_KEYWORD);
+        assert parts[1].trim().contains(TO_KEYWORD);
+        String[] fromSplitParts = parts[1].split(FROM_KEYWORD);
+        String[] toSplitParts = fromSplitParts[1].split(TO_KEYWORD);
         return new ArrayList<>(List.of(toSplitParts[0].trim(), toSplitParts[1].trim()));
     }
 }
