@@ -88,10 +88,14 @@ public class TaskList {
      */
     public StringBuilder listTasks() {
         StringBuilder tasksStr = new StringBuilder();
-        for (int i = 0; i < this.tasks.size(); i++) {
-            if (this.tasks.get(i) != null) {
-                tasksStr.append(i + 1).append(". ").append(this.tasks.get(i));
-                if (i < this.tasks.size() - 1) {
+        int numTasks = getNumTasks();
+        for (int i = 0; i < numTasks; i++) {
+            Task task = this.tasks.get(i);
+            if (task != null) {
+                tasksStr.append(i + 1).append(". ").append(task);
+
+                // Add new line for each task as formatting (except the last task)
+                if (i < numTasks - 1) {
                     tasksStr.append("\n");
                 }
             }
@@ -104,8 +108,11 @@ public class TaskList {
         String lowerKeyword = keyword.toLowerCase();
 
         for (Task task : this.tasks) {
-            if (task != null && task.getDescription().toLowerCase().contains(lowerKeyword)) {
-                matchedTasks.add(task);
+            if (task != null) {
+                boolean taskContainsKeyword = task.getDescription().toLowerCase().contains(lowerKeyword);
+                if (taskContainsKeyword) {
+                    matchedTasks.add(task);
+                }
             }
         }
 

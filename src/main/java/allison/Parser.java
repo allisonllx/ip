@@ -119,13 +119,17 @@ public class Parser {
     public int parseTaskNum(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
-        return Integer.parseInt(parts[1]);
+
+        String taskNum = parts[1];
+        return Integer.parseInt(taskNum);
     }
 
     public String parseFindKeyword(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
-        return parts[1].trim();
+
+        String keyword = parts[1];
+        return keyword.trim();
     }
 
     /**
@@ -137,7 +141,9 @@ public class Parser {
     public String parseTodoDesc(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
-        return parts[1].trim();
+
+        String description = parts[1];
+        return description.trim();
     }
 
     /**
@@ -150,7 +156,9 @@ public class Parser {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
         String[] bySplitParts = parts[1].split("/by");
-        return bySplitParts[0].trim();
+
+        String description = bySplitParts[0];
+        return description.trim();
     }
 
     /**
@@ -163,7 +171,9 @@ public class Parser {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
         String[] bySplitParts = parts[1].split("/by");
-        return new ArrayList<>(List.of(bySplitParts[1].trim()));
+
+        String byArgs = bySplitParts[1].trim();
+        return new ArrayList<>(List.of(byArgs));
     }
 
     /**
@@ -176,7 +186,9 @@ public class Parser {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
         String[] fromSplitParts = parts[1].split("/from");
-        return fromSplitParts[0].trim();
+
+        String description = fromSplitParts[0];
+        return description.trim();
     }
 
     /**
@@ -190,6 +202,9 @@ public class Parser {
         String[] parts = trimmedCommand.split(" ", 2);
         String[] fromSplitParts = parts[1].split("/from");
         String[] toSplitParts = fromSplitParts[1].split("/to");
-        return new ArrayList<>(List.of(toSplitParts[0].trim(), toSplitParts[1].trim()));
+
+        String fromArgs = toSplitParts[0].trim();
+        String toArgs = toSplitParts[1].trim();
+        return new ArrayList<>(List.of(fromArgs, toArgs));
     }
 }
