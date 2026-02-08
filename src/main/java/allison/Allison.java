@@ -121,6 +121,10 @@ public class Allison {
         return ui.findTask(tasks);
     }
 
+    public String provideHelp() {
+        return ui.provideHelp();
+    }
+
     /**
      * Adds a todo task with the given description.
      *
@@ -190,6 +194,9 @@ public class Allison {
             case LIST:
                 botMessage = listTasks();
                 break;
+            case HELP:
+                botMessage = provideHelp();
+                break;
             case MARK:
                 int markTaskNum = parser.parseTaskNum(input);
                 botMessage = markTask(markTaskNum);
@@ -254,6 +261,9 @@ public class Allison {
                     break;
                 case LIST:
                     botMessage = allison.listTasks();
+                    break;
+                case HELP:
+                    botMessage = allison.provideHelp();
                     break;
                 case MARK:
                     int markTaskNum = parser.parseTaskNum(text);

@@ -112,4 +112,44 @@ public class Ui {
         TaskList taskList = new TaskList(tasks);
         return "Here are the matching tasks in your list:\n" + taskList.listTasks();
     }
+
+    public String provideHelp() {
+        //                + "==================== HELP ====================\n"
+        return "Here are the supported commands and what they do:\n\n"
+
+                + "General:\n"
+                + "  help\n"
+                + "    Show this help page\n\n"
+
+                + "  list\n"
+                + "    List all tasks\n\n"
+
+                + "Task management:\n"
+                + "  mark <task number>\n"
+                + "    Mark a task as done\n\n"
+
+                + "  unmark <task number>\n"
+                + "    Mark a task as not done\n\n"
+
+                + "  delete <task number>\n"
+                + "    Delete a task\n\n"
+
+                + "  find <keyword>\n"
+                + "    Find tasks containing the keyword\n\n"
+
+                + "Task creation:\n"
+                + "  todo <description>\n"
+                + "    Create a todo task\n\n"
+
+                + "  deadline <description> /by <time>\n"
+                + "    Create a deadline task\n\n"
+
+                + "  event <description> /from <start> /to <end>\n"
+                + "    Create an event task\n\n"
+
+                + "Exit:\n"
+                + "  bye\n"
+                + "    Exit the application\n";
+//                + "==============================================";
+    }
 }
