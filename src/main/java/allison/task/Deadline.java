@@ -9,14 +9,17 @@ public class Deadline extends Task {
 
     public Deadline(String description, LocalDateTime dueDate) {
         super(description);
+        assert description != null;
         this.dueDate = dueDate;
     }
 
     public String toLocalDateString(LocalDateTime d) {
+        assert d != null;
         return d.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
     }
 
     public String toDateString(LocalDateTime d) {
+        assert d != null;
         return d.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
     }
 
