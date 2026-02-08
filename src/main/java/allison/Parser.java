@@ -10,6 +10,7 @@ import java.util.List;
 public class Parser {
     private static final String BYE_COMMAND = "bye";
     private static final String LIST_COMMAND = "list";
+    private static final String HELP_COMMAND = "help";
     private static final String MARK_COMMAND = "mark";
     private static final String UNMARK_COMMAND = "unmark";
     private static final String DELETE_COMMAND = "delete";
@@ -44,6 +45,8 @@ public class Parser {
             return Command.BYE;
         case LIST_COMMAND:
             return Command.LIST;
+        case HELP_COMMAND:
+            return Command.HELP;
         case TODO_COMMAND:
             if (parts.length < 2) {
                 throw new AllisonException("Missing description in todo", "todo <description>");
