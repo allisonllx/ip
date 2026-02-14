@@ -1,9 +1,7 @@
 package allison;
 
-import java.io.FileNotFoundException;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Scanner;
 import java.time.LocalDateTime;
 import allison.task.Task;
@@ -116,11 +114,22 @@ public class Allison {
         return ui.deleteTask(task, taskList.getNumTasks());
     }
 
+    /**
+     * Finds and returns tasks whose descriptions contain the given keyword.
+     *
+     * @param keyword The search keyword.
+     * @return Formatted list of matching tasks.
+     */
     public String findTask(String keyword) {
         ArrayList<Task> tasks = taskList.findTasks(keyword);
         return ui.findTask(tasks);
     }
 
+    /**
+     * Returns the help message listing all available commands.
+     *
+     * @return Help message string.
+     */
     public String provideHelp() {
         return ui.provideHelp();
     }
@@ -182,6 +191,13 @@ public class Allison {
     }
 
 
+    /**
+     * Processes the user's input and returns the appropriate response.
+     * Parses the command, executes the corresponding action, and saves tasks.
+     *
+     * @param input The raw user input string.
+     * @return The response message to display to the user.
+     */
     public String getResponse(String input) {
         String botMessage;
         try {
@@ -237,75 +253,27 @@ public class Allison {
     }
 
     /**
-     * Runs the Allison application and handles user interaction.
+     * Runs the Allison application in CLI mode, reading user input
+     * and printing responses until the user types "bye".
      *
-     * @param args Command-line arguments.
+     * @param args Command-line arguments (not used).
      */
     public static void main(String[] args) {
         Allison allison = new Allison();
-        Parser parser = new Parser();
         Scanner sc = new Scanner(System.in);
-        boolean running = true;
 
         System.out.println(allison.greetUser());
-        while (running) {
-            String text = sc.nextLine();
-            String botMessage;
-            try {
-                Command command = parser.parseCommand(text);
-
-                switch (command) {
-                case BYE:
-                    botMessage = allison.exitUser();
-                    running = false;
-                    break;
-                case LIST:
-                    botMessage = allison.listTasks();
-                    break;
-                case HELP:
-                    botMessage = allison.provideHelp();
-                    break;
-                case MARK:
-                    int markTaskNum = parser.parseTaskNum(text);
-                    botMessage = allison.markTask(markTaskNum);
-                    break;
-                case UNMARK:
-                    int unmarkTaskNum = parser.parseTaskNum(text);
-                    botMessage = allison.unmarkTask(unmarkTaskNum);
-                    break;
-                case DELETE:
-                    int deleteTaskNum = parser.parseTaskNum(text);
-                    botMessage = allison.deleteTask(deleteTaskNum);
-                    break;
-                case FIND:
-                    String keyword = parser.parseFindKeyword(text);
-                    botMessage = allison.findTask(keyword);
-                    break;
-                case TODO:
-                    String todoDesc = parser.parseTodoDesc(text);
-                    botMessage = allison.addTodo(todoDesc);
-                    break;
-                case DEADLINE:
-                    String deadlineDesc = parser.parseDeadlineDesc(text);
-                    ArrayList<String> deadlineArgs = parser.parseDeadlineArgs(text);
-                    botMessage = allison.addDeadline(deadlineDesc, deadlineArgs);
-                    break;
-                case EVENT:
-                    String eventDesc = parser.parseEventDesc(text);
-                    ArrayList<String> eventArgs = parser.parseEventArgs(text);
-                    botMessage = allison.addEvent(eventDesc, eventArgs);
-                    break;
-                default:
-                    botMessage = allison.showError(text);
-                }
-            } catch (Exception e) {
-                botMessage = allison.showError(e);
-            }
-
-            System.out.println(botMessage);
+        boolean isRunning = true;
+        while (isRunning) {
+            String input = sc.nextLine();
+            String response = allison.getResponse(input);
+            System.out.println(response);
             allison.saveTasks();
-        }
 
+            if (input.trim().equalsIgnoreCase("bye")) {
+                isRunning = false;
+            }
+        }
         sc.close();
     }
 }

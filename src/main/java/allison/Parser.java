@@ -48,80 +48,113 @@ public class Parser {
         case HELP_COMMAND:
             return Command.HELP;
         case TODO_COMMAND:
-            if (parts.length < 2) {
-                throw new AllisonException("Missing description in todo", "todo <description>");
-            }
+            validateHasArguments(parts, "Missing description in todo", "todo <description>");
             return Command.TODO;
         case DEADLINE_COMMAND:
-            if (!trimmedCommand.contains(BY_KEYWORD)) {
-                throw new AllisonException("Missing /by in deadline", "deadline <task> /by <time>");
-            }
-            if (parts.length < 2) {
-                throw new AllisonException("Incomplete arguments", "deadline <task> /by <time>");
-            }
-            if (parts[1].startsWith(BY_KEYWORD)) {
-                throw new AllisonException("Missing description in deadline", "deadline <task> /by <time>");
-            }
-            if (parts[1].split(BY_KEYWORD).length < 2) {
-                throw new AllisonException("Missing due date in deadline", "deadline <task> /by <time>");
-            }
+            validateDeadlineCommand(trimmedCommand, parts);
             return Command.DEADLINE;
         case EVENT_COMMAND:
-            if (!trimmedCommand.contains(FROM_KEYWORD) || !trimmedCommand.contains(TO_KEYWORD)) {
-                throw new AllisonException("Missing /from or /to in event", "event <desc> /from <start> /to <end>");
-            }
-            if (parts.length < 2) {
-                throw new AllisonException("Incomplete arguments", "event <desc> /from <start> /to <end>");
-            }
-            if (parts[1].startsWith(FROM_KEYWORD)) {
-                throw new AllisonException("Missing description in event", "event <desc> /from <start> /to <end>");
-            }
-            String[] fromSplitParts = parts[1].split(FROM_KEYWORD, 2);
-            if (fromSplitParts[1].startsWith(TO_KEYWORD)) {
-                throw new AllisonException("Missing start date/time in event", "event <desc> /from <start> /to <end>");
-            }
-            String[] toSplitParts = fromSplitParts[1].split(TO_KEYWORD, 2);
-            if (toSplitParts[1].isEmpty()) {
-                throw new AllisonException("Missing enc date/time in event", "event <desc> /from <start> /to <end>");
-            }
+            validateEventCommand(trimmedCommand, parts);
             return Command.EVENT;
         case MARK_COMMAND:
-            if (parts.length < 2) {
-                throw new AllisonException("Missing task number", "mark <task number>");
-            }
-            try {
-                int num = Integer.parseInt(parts[1]);
-            } catch (NumberFormatException e) {
-                throw new AllisonException("Invalid input after 'mark'", "mark <task number>");
-            }
+            validateTaskNumCommand(parts, MARK_COMMAND);
             return Command.MARK;
         case UNMARK_COMMAND:
-            if (parts.length < 2) {
-                throw new AllisonException("Missing task number", "unmark <task number>");
-            }
-            try {
-                int num = Integer.parseInt(parts[1]);
-            } catch (NumberFormatException e) {
-                throw new AllisonException("Invalid input after 'unmark'", "unmark <task number>");
-            }
+            validateTaskNumCommand(parts, UNMARK_COMMAND);
             return Command.UNMARK;
         case DELETE_COMMAND:
-            if (parts.length < 2) {
-                throw new AllisonException("Missing task number", "delete <task number>");
-            }
-            try {
-                int num = Integer.parseInt(parts[1]);
-            } catch (NumberFormatException e) {
-                throw new AllisonException("Invalid input after 'delete'", "delete <task number>");
-            }
+            validateTaskNumCommand(parts, DELETE_COMMAND);
             return Command.DELETE;
         case FIND_COMMAND:
-            if (parts.length < 2) {
-                throw new AllisonException("Missing keyword", "find <keyword>");
-            }
+            validateHasArguments(parts, "Missing keyword", "find <keyword>");
             return Command.FIND;
         default:
             throw new AllisonException();
+        }
+    }
+
+    /**
+     * Validates that the command parts contain arguments beyond the keyword.
+     *
+     * @param parts Split command parts.
+     * @param errorMessage Error message if arguments are missing.
+     * @param correctUsage Correct usage string shown to the user.
+     * @throws AllisonException If arguments are missing.
+     */
+    private void validateHasArguments(String[] parts, String errorMessage,
+            String correctUsage) throws AllisonException {
+        if (parts.length < 2) {
+            throw new AllisonException(errorMessage, correctUsage);
+        }
+    }
+
+    /**
+     * Validates that a task-number command (mark, unmark, delete) has a valid numeric argument.
+     *
+     * @param parts Split command parts.
+     * @param commandName The command name (e.g. "mark", "unmark", "delete").
+     * @throws AllisonException If the task number is missing or not a valid integer.
+     */
+    private void validateTaskNumCommand(String[] parts, String commandName) throws AllisonException {
+        String usage = commandName + " <task number>";
+        if (parts.length < 2) {
+            throw new AllisonException("Missing task number", usage);
+        }
+        try {
+            Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            throw new AllisonException("Invalid input after '" + commandName + "'", usage);
+        }
+    }
+
+    /**
+     * Validates that a deadline command has a description and a /by date.
+     *
+     * @param trimmedCommand The full trimmed command string.
+     * @param parts Split command parts.
+     * @throws AllisonException If the deadline command is malformed.
+     */
+    private void validateDeadlineCommand(String trimmedCommand, String[] parts) throws AllisonException {
+        String usage = "deadline <task> /by <time>";
+        if (!trimmedCommand.contains(BY_KEYWORD)) {
+            throw new AllisonException("Missing /by in deadline", usage);
+        }
+        if (parts.length < 2) {
+            throw new AllisonException("Incomplete arguments", usage);
+        }
+        if (parts[1].startsWith(BY_KEYWORD)) {
+            throw new AllisonException("Missing description in deadline", usage);
+        }
+        if (parts[1].split(BY_KEYWORD).length < 2) {
+            throw new AllisonException("Missing due date in deadline", usage);
+        }
+    }
+
+    /**
+     * Validates that an event command has a description, /from start time, and /to end time.
+     *
+     * @param trimmedCommand The full trimmed command string.
+     * @param parts Split command parts.
+     * @throws AllisonException If the event command is malformed.
+     */
+    private void validateEventCommand(String trimmedCommand, String[] parts) throws AllisonException {
+        String usage = "event <desc> /from <start> /to <end>";
+        if (!trimmedCommand.contains(FROM_KEYWORD) || !trimmedCommand.contains(TO_KEYWORD)) {
+            throw new AllisonException("Missing /from or /to in event", usage);
+        }
+        if (parts.length < 2) {
+            throw new AllisonException("Incomplete arguments", usage);
+        }
+        if (parts[1].startsWith(FROM_KEYWORD)) {
+            throw new AllisonException("Missing description in event", usage);
+        }
+        String[] fromSplitParts = parts[1].split(FROM_KEYWORD, 2);
+        if (fromSplitParts[1].startsWith(TO_KEYWORD)) {
+            throw new AllisonException("Missing start date/time in event", usage);
+        }
+        String[] toSplitParts = fromSplitParts[1].split(TO_KEYWORD, 2);
+        if (toSplitParts[1].isEmpty()) {
+            throw new AllisonException("Missing end date/time in event", usage);
         }
     }
 
@@ -144,6 +177,12 @@ public class Parser {
         return Integer.parseInt(taskNum);
     }
 
+    /**
+     * Returns the keyword to search for from a find command.
+     *
+     * @param command Full user input string.
+     * @return The search keyword.
+     */
     public String parseFindKeyword(String command) {
         String trimmedCommand = command.trim();
         String[] parts = trimmedCommand.split(" ", 2);
@@ -183,8 +222,7 @@ public class Parser {
         String[] parts = trimmedCommand.split(" ", 2);
 
         assert parts[0].trim().equals(DEADLINE_COMMAND);
-        assert parts[0].trim().contains(BY_KEYWORD);
-        assert parts.length > 1;
+        assert parts.length > 1 && parts[1].contains(BY_KEYWORD);
         String[] bySplitParts = parts[1].split(BY_KEYWORD);
 
         String description = bySplitParts[0];

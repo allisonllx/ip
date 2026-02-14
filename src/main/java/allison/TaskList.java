@@ -18,10 +18,20 @@ public class TaskList {
         this.tasks = tasks;
     }
 
+    /**
+     * Returns the underlying list of tasks.
+     *
+     * @return The list of tasks.
+     */
     public ArrayList<Task> getTasks() {
         return this.tasks;
     }
 
+    /**
+     * Returns the number of tasks in the list.
+     *
+     * @return The number of tasks.
+     */
     public int getNumTasks() {
         return this.tasks.size();
     }
@@ -43,9 +53,7 @@ public class TaskList {
      * @throws AllisonException If the task number is out of range.
      */
     public Task removeTask(int taskNum) throws AllisonException {
-        if (taskNum > getNumTasks() || taskNum < 0) {
-            throw new AllisonException("taskNum out of range", "mark <task number>");
-        }
+        validateTaskNum(taskNum, "delete <task number>");
         Task task = this.tasks.get(taskNum - 1);
         this.tasks.remove(taskNum - 1);
         return task;
@@ -59,9 +67,7 @@ public class TaskList {
      * @throws AllisonException If the task number is out of range.
      */
     public Task markTask(int taskNum) throws AllisonException {
-        if (taskNum > getNumTasks() || taskNum < 0) {
-            throw new AllisonException("taskNum out of range", "mark <task number>");
-        }
+        validateTaskNum(taskNum, "mark <task number>");
         this.tasks.get(taskNum - 1).markAsDone();
         return this.tasks.get(taskNum - 1);
     }
@@ -74,11 +80,22 @@ public class TaskList {
      * @throws AllisonException If the task number is out of range.
      */
     public Task unmarkTask(int taskNum) throws AllisonException {
-        if (taskNum > getNumTasks() || taskNum < 0) {
-            throw new AllisonException("taskNum out of range", "mark <task number>");
-        }
+        validateTaskNum(taskNum, "unmark <task number>");
         this.tasks.get(taskNum - 1).markAsUndone();
         return this.tasks.get(taskNum - 1);
+    }
+
+    /**
+     * Validates that a task number is within the valid range (1-based).
+     *
+     * @param taskNum The task number to validate.
+     * @param commandUsage The correct usage string shown in error messages.
+     * @throws AllisonException If the task number is out of range.
+     */
+    private void validateTaskNum(int taskNum, String commandUsage) throws AllisonException {
+        if (taskNum > getNumTasks() || taskNum < 1) {
+            throw new AllisonException("Task number out of range", commandUsage);
+        }
     }
 
     /**
@@ -103,6 +120,12 @@ public class TaskList {
         return tasksStr;
     }
 
+    /**
+     * Returns a list of tasks whose descriptions contain the given keyword (case-insensitive).
+     *
+     * @param keyword The keyword to search for.
+     * @return A list of matching tasks.
+     */
     public ArrayList<Task> findTasks(String keyword) {
         ArrayList<Task> matchedTasks = new ArrayList<>();
         String lowerKeyword = keyword.toLowerCase();
