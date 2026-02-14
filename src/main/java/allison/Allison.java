@@ -249,6 +249,7 @@ public class Allison {
         } catch (Exception e) {
             botMessage = showError(e);
         }
+        saveTasks();
         return botMessage;
     }
 
@@ -268,7 +269,6 @@ public class Allison {
             String input = sc.nextLine();
             String response = allison.getResponse(input);
             System.out.println(response);
-            allison.saveTasks();
 
             if (input.trim().equalsIgnoreCase("bye")) {
                 isRunning = false;
