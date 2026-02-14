@@ -1,7 +1,7 @@
 package allison;
 
 import java.util.ArrayList;
-import java.util.Scanner;
+
 import allison.task.Task;
 
 /**
@@ -9,8 +9,6 @@ import allison.task.Task;
  * Responsible for generating responses shown to the user.
  */
 public class Ui {
-    private final Scanner scanner = new Scanner(System.in);
-    private final String SEPARATOR = "_".repeat(60);
 
     /**
      * Returns the welcome message shown when the application starts.
@@ -108,15 +106,24 @@ public class Ui {
                 + "Now you have " + numTasks + " tasks in the list.";
     }
 
+    /**
+     * Returns a formatted list of tasks matching a search query.
+     *
+     * @param tasks List of matching tasks.
+     * @return Formatted matching-task list message.
+     */
     public String findTask(ArrayList<Task> tasks) {
         TaskList taskList = new TaskList(tasks);
         return "Here are the matching tasks in your list:\n" + taskList.listTasks();
     }
 
+    /**
+     * Returns a help message listing all supported commands and their usage.
+     *
+     * @return Formatted help message string.
+     */
     public String provideHelp() {
-        //                + "==================== HELP ====================\n"
         return "Here are the supported commands and what they do:\n\n"
-
                 + "General:\n"
                 + "  help\n"
                 + "    Show this help page\n\n"
@@ -150,6 +157,5 @@ public class Ui {
                 + "Exit:\n"
                 + "  bye\n"
                 + "    Exit the application\n";
-//                + "==============================================";
     }
 }

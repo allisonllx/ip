@@ -1,13 +1,21 @@
 package allison.task;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 
+/**
+ * Represents a task that spans a time period, with a start and end date/time.
+ */
 public class Event extends Task {
     protected LocalDateTime start;
     protected LocalDateTime end;
 
+    /**
+     * Constructs an Event task with the given description, start time, and end time.
+     *
+     * @param description The description of the event.
+     * @param start The start date/time of the event.
+     * @param end The end date/time of the event.
+     */
     public Event(String description, LocalDateTime start, LocalDateTime end) {
         super(description);
         assert start != null && end != null;
@@ -15,26 +23,16 @@ public class Event extends Task {
         this.end = end;
     }
 
-    public String toLocalDateString(LocalDateTime d) {
-        assert d != null;
-        return d.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM));
-    }
-
-    public String toDateString(LocalDateTime d) {
-        assert d != null;
-        return d.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
-    }
-
     @Override
     public String toString() {
         return "[E]" + super.toString()
-                + " (from: " + toLocalDateString(start)
-                + " to: " + toLocalDateString(end) + ")";
+                + " (from: " + start.format(DISPLAY_DATE_FORMAT)
+                + " to: " + end.format(DISPLAY_DATE_FORMAT) + ")";
     }
 
     @Override
     public String toFileString() {
-        return "D|" + (isDone ? 1 : 0) + "|" + description
-                + "|" + toDateString(start) + "|" + toDateString(end);
+        return "E|" + (isDone ? 1 : 0) + "|" + description
+                + "|" + start.format(FILE_DATE_FORMAT) + "|" + end.format(FILE_DATE_FORMAT);
     }
 }
